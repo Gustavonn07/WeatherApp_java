@@ -19,6 +19,7 @@
 
     JComboBox: Um componente de menu suspenso que permite ao usuário selecionar um item de uma lista.
  */
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -26,9 +27,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class WeatherAppGUI extends JFrame {
+public class Weather_GUI extends JFrame {
 
-    public WeatherAppGUI() {
+    public Weather_GUI() {
         super("Weather App");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
