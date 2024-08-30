@@ -20,14 +20,19 @@
     JComboBox: Um componente de menu suspenso que permite ao usuário selecionar um item de uma lista.
  */
 
+import org.json.simple.JSONObject;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class Weather_GUI extends JFrame {
+    private JSONObject weatherData;
 
     public Weather_GUI() {
         super("Weather App");
@@ -48,11 +53,6 @@ public class Weather_GUI extends JFrame {
         searchTextField.setBounds(15, 15, 301, 45);
         searchTextField.setFont(new Font("Dialog", Font.PLAIN, 24));
         add(searchTextField);
-
-        JButton searchButton = new JButton(loadImage("src/assets/search.png"));
-        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        searchButton.setBounds(325, 13, 47, 45);
-        add(searchButton);
 
         JLabel weatherConditionImage = new JLabel(loadImage("src/assets/cloudy.png"));
         weatherConditionImage.setBounds(-35, 125, 450, 217);
@@ -87,6 +87,47 @@ public class Weather_GUI extends JFrame {
         windspeedText.setBounds(295, 505, 85, 55);
         windspeedText.setFont(new Font("Dialog", Font.PLAIN, 16));
         add(windspeedText);
+
+        JButton searchButton = new JButton(loadImage("src/assets/search.png"));
+        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        searchButton.setBounds(325, 13, 47, 45);
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String userInput = searchTextField.getText();
+
+                if(userInput.replaceAll("\\s", "").length() <= 0) return;
+                weatherData = Weather_API.getWeatherData(userInput);
+
+                String weatherCondition = (String) weatherData.get("weather_condition");
+                switch(weatherCondition){
+                    case "Clear":
+                        weatherConditionImage.setIcon(loadImage("src/assets/clear.png"));
+                        break;
+                    case "Cloudy":
+                        weatherConditionImage.setIcon(loadImage("src/assets/cloudy.png"));
+                        break;
+                    case "Rain":
+                        weatherConditionImage.setIcon(loadImage("src/assets/rain.png"));
+                        break;
+                    case "Snow":
+                        weatherConditionImage.setIcon(loadImage("src/assets/snow.pngImage"));
+                        break;
+                }
+
+                double temperature = (double) weatherData.get("temperature");
+                temperatureText.setText(temperature + " C");
+
+                weatherConditionDesc.setText(weatherCondition);
+
+                long humidity = (long) weatherData.get("humidity");
+                humidityText.setText("<html><b>Humidity</b> " + humidity + "%</html>");
+
+                double windspeed = (double) weatherData.get("windspeed");
+                windspeedText.setText("<html><b>Windspeed</b> " + windspeed + "km/h</html>");
+            }
+        });
+        add(searchButton);
     }
 
     private ImageIcon loadImage(String path) {
